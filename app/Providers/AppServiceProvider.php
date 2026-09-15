@@ -13,15 +13,11 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-public function boot(): void
-{
-    if ($this->app->environment('production')) {
-        URL::forceScheme('https');
-    }
-}
-
     public function boot(): void
     {
+            if ($this->app->environment('production')) {
+        URL::forceScheme('https');
+    }
         // Laravel's default pagination view assumes Tailwind is loaded (it isn't
         // in this project - all styling here is plain CSS) and ships unstyled SVG
         // chevron icons that render at their native, oversized dimensions without

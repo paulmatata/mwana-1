@@ -43,7 +43,7 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock* ./
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --ignore-platform-req=php+
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --ignore-platform-reqs
 
 # Storage and cache directories must be writable by the web server
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \

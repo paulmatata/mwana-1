@@ -26,6 +26,9 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         intl \
         opcache
 
+# Upload size and memory overrides - see docker/php-overrides.ini for why
+COPY docker/php-overrides.ini /usr/local/etc/php/conf.d/zz-mwana-overrides.ini
+
 # --- Apache: serve from public/, enable rewrite for Laravel's pretty URLs ---
 RUN a2enmod rewrite headers
 COPY docker/apache-vhost.conf /etc/apache2/sites-available/000-default.conf

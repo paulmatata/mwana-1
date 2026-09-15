@@ -93,14 +93,53 @@ Super Admin:
 - Email: `admin@mwana.app`
 - Password: `ChangeMe123!`
 
-**Change this password immediately** — there's no in-app "change password" screen
-for Super Admin yet, so for now the quickest path is running `php artisan tinker`
-via Render's Shell tab and updating it directly:
-```php
-$u = \App\Models\User::where('email', 'admin@mwana.app')->first();
-$u->password = \Illuminate\Support\Facades\Hash::make('your-new-password');
-$u->save();
-```
+**Change this password immediately** — go to **Change Password** in the sidebar
+once logged in (works for every role, including Super Admin).
+
+## 7. Set up real email (required for Forgot Password to work)
+
+By default, `MAIL_MAILER=log` just writes emails to Render's application logs —
+nobody actually receives anything. Forgot Password won't be usable until you set
+a real mail driver. Add these to Render's environment variables:
+
+| Key | Example |
+|---|---|
+| `MAIL_MAILER` | `smtp` |
+| `MAIL_HOST` | your provider's SMTP host |
+| `MAIL_PORT` | `587` |
+| `MAIL_USERNAME` | your SMTP username |
+| `MAIL_PASSWORD` | your SMTP password / API key |
+| `MAIL_ENCRYPTION` | `tls` |
+| `MAIL_FROM_ADDRESS` | `no-reply@yourdomain.com` |
+| `MAIL_FROM_NAME` | `Mwana` |
+
+Fastest path for testing: a free-tier transactional email provider (Resend, Brevo,
+Mailgun, SendGrid) — they issue SMTP credentials immediately, no custom domain
+required to start. Gmail SMTP with an App Password also works for light testing.
+
+## Troubleshooting: bulk import / spreadsheet errors ("firing errors everywhere")
+
+Two likely causes, both worth checking:
+
+1. **`composer.lock` out of sync with `composer.json`.** If `phpoffice/phpspreadsheet`
+   was added to `composer.json` after the lock file was last generated, `composer install`
+   (which strictly follows the lock file) silently skips it even though it's listed.
+   Fix:
+   ```bash
+   composer require phpoffice/phpspreadsheet
+   git add composer.json composer.lock
+   git commit -m "Fix: re-lock phpoffice/phpspreadsheet"
+   git push
+   ```
+2. **PHP upload/memory limits too small.** Fixed in `docker/php-overrides.ini`
+   (bumped `upload_max_filesize`, `post_max_size`, and `memory_limit` — PHP's
+   defaults are too small for Excel uploads and PhpSpreadsheet's parsing). Make
+   sure this file is present and referenced in the Dockerfile before rebuilding.
+
+If errors persist after both, check Render's build and runtime logs for the exact
+error message — "Class ... not found" points to (1), anything mentioning
+"allowed memory size" or "exceeds the maximum" points to (2) or a spreadsheet
+that's still too large even with the raised limits.
 
 ## Iterating after today
 

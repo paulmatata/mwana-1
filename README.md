@@ -421,7 +421,23 @@ instead — worth knowing if you're extending this yourself.
 - ~~Phase 11 — Subject enrollment (electives), teacher-subject qualifications, results totals/average/mean grade~~ ✅ Done
 - ~~Phase 12 — Grid-based timetable builder, draft/publish workflow, client-side validation, clearer bulk-error messages~~ ✅ Done
 - ~~Phase 13 — Term entity across exams/timetable/fees, fee ledger with debit/credit/running balance~~ ✅ Done
-- **Phase 14** — UI/UX fixes in progress: pagination icon bug fixed, table/sidebar
-  overlap fixed, buttons resized, sidebar now sticky, responsive mobile nav added,
-  Change Password (all roles) and Forgot Password (email-based) added. Still to come
-  in this phase: full color-scheme redesign (waiting on your hex codes/screenshot).
+- ~~Phase 14 — UI bug fixes (pagination, table/sidebar overlap, button sizing), sticky
+  sidebar, responsive mobile nav, Change Password (all roles), Forgot Password~~ ✅ Done
+- ~~Phase 15 — Results ranked by performance, fees ordered by balance, students ordered
+  by relevance to the viewing teacher, elective scheduling-conflict prevention,
+  teacher-editable marks, class detail view, dashboard risk-scanner insights~~ ✅ Done
+- ~~Phase 16 — Full visual redesign: Makueni County blue/green brand palette, Poppins
+  font, rounder corners, hover interactions~~ ✅ Done
+
+## Deployment
+
+See **`DEPLOY.md`** for the full GitHub → Render (Docker) → Aiven MySQL walkthrough,
+including:
+- The exact environment variables Render needs
+- Aiven's SSL certificate requirement and how it's handled
+- **Setting up real email** (required for Forgot Password to actually deliver —
+  `MAIL_MAILER=log` by default just writes to Render's logs, nobody receives anything)
+- **Troubleshooting bulk-import/spreadsheet errors** — almost always either a
+  `composer.lock` out of sync with `composer.json` (re-run `composer require
+  phpoffice/phpspreadsheet` and push), or PHP's default upload/memory limits being
+  too small (fixed via `docker/php-overrides.ini`, bundled into the Docker image)
